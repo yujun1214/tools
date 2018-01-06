@@ -220,6 +220,6 @@ def load_mkt_daily(is_one_day=False, str_date=None):
 
 
 if __name__ == '__main__':
-    load_mkt_1min('20180103', 'D')
+    load_mkt_1min('20180105', 'D')
 
-    load_mkt_daily(True, '2018-01-03')
+    load_mkt_daily(True, '2018-01-05')
