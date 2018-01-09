@@ -28,7 +28,7 @@ def load_cap_struct():
     # 然后每个个股分别保存一个股本结构数据文件
     codes = df_cap_struct.code.unique()
     for code in codes:
-        print('processing capital structure data of %s.' % code)
+        # print('processing capital structure data of %s.' % code)
         df_single_cap_struct = df_cap_struct[df_cap_struct.code == code]
         df_single_cap_struct.to_csv(os.path.join(db_path, code+'.csv'), index=False,
                                     header=['代码', '变更日期', '变更原因', '总股本', '流通A股', '流通B股', '流通H股'])

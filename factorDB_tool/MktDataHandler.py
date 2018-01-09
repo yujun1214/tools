@@ -34,7 +34,7 @@ def load_mkt_1min(tm, tmtype):
         if os.path.splitext(mkt_file_name)[1] != '.csv':
             continue
         mkt_file_path = os.path.join(raw_data_path, mkt_file_name)
-        print('processing file %s' % mkt_file_path)
+        # print('processing file %s' % mkt_file_path)
         _write_1min_FQ_data(mkt_file_path, db_path)
 
     # if tmtype == 'Y':
@@ -140,7 +140,7 @@ def load_mkt_daily(is_one_day=False, str_date=None):
                 str_header_NoFQ = str_header_FQ[1:-1]
                 for row in csv_reader:
                     code = row[0].upper()
-                    print('[%s] processing intrument %s' % (str_date, code))
+                    # print('[%s] processing intrument %s' % (str_date, code))
                     # 保存复权日线数据
                     mkt_file_path = os.path.join(db_path_fq, '%s.csv' % code)
                     if os.path.exists(mkt_file_path):
