@@ -110,17 +110,24 @@ def _write_1min_FQ_data(mkt_file_path, db_path):
                     csv_writer.writerows(dst_rows)
 
 
-def load_mkt_daily(is_one_day=False, str_date=None):
+def load_mkt_daily(is_one_day=False, str_date=None, is_index_data=False):
     """
     导入个股复权日行情数据至因子数据库，同时导入到复权行情因子库和不复权行情因子库
     :param is_one_day: bool, 是否导入一天的数据，默认False
-    :param str_date: str, 当is_one_day=True时，指定导入的日期。如果is_one_day=True,str_date=None，则导入当天的行情数据
+    :param str_date: str, 格式：YYYY-MM-DD
+        当is_one_day=True时，指定导入的日期。如果is_one_day=True,str_date=None，则导入当天的行情数据
+    :param is_index_data, bool，默认False
+        是否是指数历史数据
     :return:
     """
     cfg = ConfigParser()
     cfg.read('config.ini')
     raw_data_path = cfg.get('mkt_data_daily', 'raw_data_path')
     raw_data_path_by_daily = cfg.get('mkt_data_daily', 'raw_data_path_by_daily')
+    raw_data_path_idx = cfg.get('mkt_data_daily', 'raw_data_path_idx')
+    if is_one_day and is_index_data:
+        print("导入一天的日线数据，'is_index_data'参数值不能为True.")
+        return
     if is_one_day:
         if str_date is None:
             str_date = datetime.date.today().strftime('%Y%m%d')
@@ -176,6 +183,36 @@ def load_mkt_daily(is_one_day=False, str_date=None):
                         with open(mkt_file_path, 'w') as dst_nofq_file:
                             dst_nofq_file.write(','.join(str_header_NoFQ) + '\n')
                             dst_nofq_file.write(','.join(mkt_data_row) + '\n')
+    elif is_index_data:
+        for mkt_file_name in os.listdir(raw_data_path_idx):
+            if os.path.splitext(mkt_file_name)[1] != '.csv':
+                continue
+            dst_file_name = mkt_file_name.upper()
+            mkt_file_path = os.path.join(raw_data_path_idx, mkt_file_name)
+            print('processing file %s' % mkt_file_path)
+            if os.path.isfile(mkt_file_path):
+                with open(mkt_file_path, 'r', newline='', encoding='GB18030') as raw_file:
+                    dst_rows_fq = []
+                    dst_rows_nofq = []
+                    csv_reader = csv.reader(raw_file)
+                    raw_header = next(csv_reader)
+                    for row in csv_reader:
+                        fq_row = row + ['0', '0', '1']
+                        # fq_row.extend(['0', '0', '1'])
+                        dst_rows_fq.append(fq_row)
+                        nofq_row = row[1:] + ['0', '0']
+                        # nofq_row.extend(['0', '0'])
+                        dst_rows_nofq.append(nofq_row)
+                with open(os.path.join(db_path_fq, dst_file_name), 'w', newline='') as dst_fq_file:
+                    csv_writer = csv.writer(dst_fq_file)
+                    fq_header = raw_header + ['流通盘换手率', '全流通换手率', '复权系数']
+                    csv_writer.writerow(fq_header)
+                    csv_writer.writerows(dst_rows_fq)
+                with open(os.path.join(db_path_nofq, dst_file_name), 'w', newline='') as dst_nofq_file:
+                    csv_writer = csv.writer(dst_nofq_file)
+                    nofq_header = raw_header[1:] + ['流通盘换手率', '全流通换手率']
+                    csv_writer.writerow(nofq_header)
+                    csv_writer.writerows(dst_rows_nofq)
     else:
         for mkt_file_name in os.listdir(raw_data_path):
             # 过滤隐藏文件
@@ -220,6 +257,6 @@ def load_mkt_daily(is_one_day=False, str_date=None):
 
 
 if __name__ == '__main__':
-    load_mkt_1min('20180105', 'D')
+    load_mkt_1min('20180109', 'D')
 
-    load_mkt_daily(True, '2018-01-05')
+    load_mkt_daily(is_one_day=True, str_date='2018-01-09', is_index_data=False)

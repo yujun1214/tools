@@ -18,7 +18,7 @@ if __name__ == '__main__':
     mkt.load_mkt_1min(str_date.replace('-', ''), 'D')
     # 导入日线行情数据
     print('导入日线行情数据...')
-    mkt.load_mkt_daily(True, str_date)
+    mkt.load_mkt_daily(True, str_date, False)
     # 导入股票股本结构数据
     print('导入股票股本结构数据...')
     cap_struct.load_cap_struct()
