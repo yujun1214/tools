@@ -24,4 +24,5 @@ if __name__ == '__main__':
     cap_struct.load_cap_struct()
     # 导入最新行业分类数据
     print('导入申万行业分类数据...')
+    ind_cls.download_sw_fyjr_classify()
     ind_cls.load_industry_classify('sw')
