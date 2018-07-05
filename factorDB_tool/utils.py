@@ -13,10 +13,22 @@ def code_to_symbol(code):
     Parameters:
     --------
     :param code: str
-        原始代码，如600000
+        原始代码，如600000, 600000.SH, 600000SH
     :return: str
         本系统证券代码，如SH600000
     """
+    if '.' in code:
+        codes = code.split('.')
+        if codes[0].upper() in ['SH', 'SZ']:
+            code = codes[1]
+        else:
+            code = codes[0]
+    else:
+        if code[:2].upper() in ['SH', 'SZ']:
+            code = code[2:]
+        if code[-2:].upper() in ['SH', 'SZ']:
+            code = code[:-2]
+
     if len(code) != 6:
         return code
     else:
@@ -24,4 +36,4 @@ def code_to_symbol(code):
 
 
 if __name__ == '__main__':
-    pass
+    print(code_to_symbol('SH600000'))
