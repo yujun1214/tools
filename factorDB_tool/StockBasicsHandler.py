@@ -27,11 +27,18 @@ def load_stock_basics(date=None):
         2. listed_date 上市日期
     """
     stock_basics = ts.get_stock_basics(date)
+
+    stock_basics.loc['000333', 'timeToMarket'] = 20130918
+    stock_basics.loc['601360', 'timeToMarket'] = 20180228
+
     stock_basics.reset_index(inplace=True)
     stock_basics['symbol'] = stock_basics['code'].map(utils.code_to_symbol)
     stock_basics = stock_basics[['symbol', 'name', 'timeToMarket']]
     stock_basics = stock_basics[stock_basics['timeToMarket'] > 0]
     stock_basics.rename(columns={'timeToMarket': 'listed_date'}, inplace=True)
+
+    # stock_basics = stock_basics.append(pd.Series(['SH601313', '江南嘉捷', 20120116], index=['symbol', 'name', 'listed_date']), ignore_index=True)
+
     stock_basics.sort_values(by='symbol', inplace=True)
 
     cfg = ConfigParser()
@@ -92,6 +99,6 @@ def load_calendar():
 
 
 if __name__ == '__main__':
-    # load_stock_basics()
+    load_stock_basics()
     # load_st_info()
-    load_calendar()
+    # load_calendar()
