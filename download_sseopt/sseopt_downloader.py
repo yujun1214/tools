@@ -40,7 +40,7 @@ def send_sseopt_file():
         mime.add_header('Content-Disposition', 'attachment', filename=os.path.basename(attached_file_name))
         mime.add_header('Content-ID', '<0>')
         mime.add_header('X-Attachment-Id', '0')
-        mime.set_payload(f.read(), charset='utf-8')
+        mime.set_payload(f.read(), charset='GB2312')
         encoders.encode_base64(mime)
         msg.attach(mime)
 
@@ -69,7 +69,7 @@ sseopts = resp.json()['pageHelp']['data']
 with open(os.path.join(opt_file_path, 'SSEOptContract%s.txt' % datetime.date.today().strftime('%Y%m%d')), 'wt', newline='\n') as f:
     for sseopt in sseopts:
         opt_one_line = '|'.join([key + '=' + value for key, value in sseopt.items()])
-        f.write(opt_one_line + '\n')
+        f.write(opt_one_line + '\r\n')
 
 # 发送邮件
 send_sseopt_file()
