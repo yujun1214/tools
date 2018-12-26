@@ -62,11 +62,12 @@ resp.encoding = 'GBK'
 # pcf_file_path = '/Users/davidyujun/Dropbox/tools/download_pcf/pcf'
 for szse_etf_code in re.findall(r'159\d{3}', resp.text):
     print('[%s] Downloading EFT %s.SZ...' % (datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), szse_etf_code))
-    url = "http://www.szse.cn/szseWeb/FrontController.szse?ACTIONID=downloadEtf&filename=pcf_%s_%s%%3B%sETF%s" % \
-          (szse_etf_code, datetime.date.today().strftime('%Y%m%d'), szse_etf_code,
-           datetime.date.today().strftime('%Y%m%d'))
+    # url = "http://www.szse.cn/szseWeb/FrontController.szse?ACTIONID=downloadEtf&filename=pcf_%s_%s%%3B%sETF%s" % \
+    #       (szse_etf_code, datetime.date.today().strftime('%Y%m%d'), szse_etf_code,
+    #        datetime.date.today().strftime('%Y%m%d'))
     # url = "http://www.szse.cn/szseWeb/FrontController.szse?ACTIONID=downloadEtf&filename=pcf_%s_%s%%3B%sETF%s" % \
     #       (szse_etf_code, '20170928', szse_etf_code, '20170928')
+    url = 'http://reportdocs.static.szse.cn/files/text/ETFDown/pcf_%s_%s.txt' % (szse_etf_code, datetime.date.today().strftime('%Y%m%d'))
     resp = requests.get(url)
     # resp.encoding = 'GBK'
     strPCFText = resp.text
@@ -78,7 +79,7 @@ for szse_etf_code in re.findall(r'159\d{3}', resp.text):
             f.write(strPCFText)
     elif strPCFText[:11] == '[FILEBEGIN]':
         resp.encoding = 'GBK'
-        strPCFText = resp.text
+        strPCFText = resp.text.replace('\r', '')
         with open(os.path.join(pcf_file_path,
                                '%s.SZ_%s.txt' % (szse_etf_code, datetime.date.today().strftime('%Y%m%d'))), 'wt') as f:
             f.write(strPCFText)
@@ -89,10 +90,10 @@ for szse_etf_code in re.findall(r'159\d{3}', resp.text):
 # ============ 从基金公司网站下载pcf文件 ===========================
 print("Downloading pcf file from fund company's website...")
 print("[%s] Downloading ETF 159919.SZ..." % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-url = "http://download.jsfund.cn/pcf/159919/2017/pcf_159919_%s.txt" % datetime.date.today().strftime('%Y%m%d')
+url = "http://download.jsfund.cn/pcf/159919/2018/pcf_159919_%s.txt" % datetime.date.today().strftime('%Y%m%d')
 resp = requests.get(url)
 resp.encoding = 'GBK'
-strPCFText = resp.text
+strPCFText = resp.text.replace('\r', '')
 nTradingDayPos = strPCFText.find('TradingDay')
 if nTradingDayPos > -1:
     tmPCFDate = datetime.datetime.strptime(strPCFText[nTradingDayPos+11:nTradingDayPos+19], '%Y%m%d').date()
