@@ -66,10 +66,10 @@ headers = {'Host': 'query.sse.com.cn', 'Referer': 'http://www.sse.com.cn/assortm
 resp = requests.get(url, params=params, headers=headers)
 sseopts = resp.json()['pageHelp']['data']
 
-with open(os.path.join(opt_file_path, 'SSEOptContract%s.txt' % datetime.date.today().strftime('%Y%m%d')), 'wt', newline='\n') as f:
+with open(os.path.join(opt_file_path, 'SSEOptContract%s.txt' % datetime.date.today().strftime('%Y%m%d')), 'wt', newline='\n', encoding='GBK') as f:
     for sseopt in sseopts:
         opt_one_line = '|'.join([key + '=' + value for key, value in sseopt.items()])
         f.write(opt_one_line + '\r\n')
 
 # 发送邮件
-send_sseopt_file()
+# send_sseopt_file()
